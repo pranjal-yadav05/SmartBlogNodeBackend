@@ -7,7 +7,6 @@ const passport = require('passport');
 const { sequelize } = require('./src/models');
 const routes = require('./src/routes');
 const errorHandler = require('./src/middleware/errorHandler');
-const newsletterScheduler = require('./src/services/newsletterScheduler');
 
 // Initialize passport configuration
 require('./src/config/passport');
@@ -17,7 +16,7 @@ const PORT = process.env.PORT || 8080;
 
 // CORS Configuration (matching Spring Boot)
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: process.env.FRONTEND_URL || '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Authorization', 'Content-Type', 'X-Auth-Token'],
   exposedHeaders: ['Authorization'],
@@ -51,6 +50,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'SmartBlog Node.js Backend is running!' });
+});
+
 // API Routes
 app.use('/api', routes);
 
@@ -60,32 +64,42 @@ app.use('/', require('./src/routes/oauthRoutes'));
 // Error handling middleware
 app.use(errorHandler);
 
-// Database connection and server startup
-const startServer = async () => {
-  try {
-    // Test database connection
-    await sequelize.authenticate();
-    console.log('✅ Database connection established successfully.');
+// For Vercel serverless, we export the app
+// For local development, we start the server
+if (process.env.VERCEL) {
+  // Vercel serverless - just export the app
+  module.exports = app;
+} else {
+  // Local development - start server with database sync
+  const newsletterScheduler = require('./src/services/newsletterScheduler');
+  
+  const startServer = async () => {
+    try {
+      // Test database connection
+      await sequelize.authenticate();
+      console.log('✅ Database connection established successfully.');
 
-    // Sync models (without altering existing tables)
-    await sequelize.sync({ alter: false });
-    console.log('✅ Database models synchronized.');
+      // Sync models (without altering existing tables)
+      await sequelize.sync({ alter: false });
+      console.log('✅ Database models synchronized.');
 
-    // Start newsletter scheduler
-    newsletterScheduler.start();
-    console.log('✅ Newsletter scheduler started.');
+      // Start newsletter scheduler
+      newsletterScheduler.start();
+      console.log('✅ Newsletter scheduler started.');
 
-    // Start server
-    app.listen(PORT, () => {
-      console.log(`🚀 SmartBlog Node.js Backend running on port ${PORT}`);
-      console.log(`📍 API available at http://localhost:${PORT}/api`);
-    });
-  } catch (error) {
-    console.error('❌ Unable to start server:', error);
-    process.exit(1);
-  }
-};
+      // Start server
+      app.listen(PORT, () => {
+        console.log(`🚀 SmartBlog Node.js Backend running on port ${PORT}`);
+        console.log(`📍 API available at http://localhost:${PORT}/api`);
+      });
+    } catch (error) {
+      console.error('❌ Unable to start server:', error);
+      process.exit(1);
+    }
+  };
 
-startServer();
+  startServer();
+}
 
+// Export for Vercel
 module.exports = app;
