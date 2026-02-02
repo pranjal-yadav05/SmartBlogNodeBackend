@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const mysql2 = require('mysql2');
 
 // Parse database URL from Spring Boot format
 const DATABASE_HOST = process.env.DATABASE_HOST;
@@ -14,6 +15,7 @@ const sequelize = new Sequelize(DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSW
   host: DATABASE_HOST,
   port: DATABASE_PORT,
   dialect: 'mysql',
+  dialectModule: mysql2,
   dialectOptions: {
     ssl: {
       require: true,
