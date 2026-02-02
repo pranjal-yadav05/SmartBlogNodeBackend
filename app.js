@@ -35,20 +35,20 @@ app.use(express.json());
 // Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Session configuration (for OAuth)
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'smartblog-secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+// // Session configuration (for OAuth)
+// app.use(session({
+//   secret: process.env.SESSION_SECRET || 'smartblog-secret',
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: {
+//     secure: process.env.NODE_ENV === 'production',
+//     maxAge: 24 * 60 * 60 * 1000 // 24 hours
+//   }
+// }));
 
 // Initialize Passport
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 // Health check endpoint
 app.get('/', (req, res) => {
@@ -66,40 +66,40 @@ app.use(errorHandler);
 
 // For Vercel serverless, we export the app
 // For local development, we start the server
-if (process.env.VERCEL) {
-  // Vercel serverless - just export the app
-  module.exports = app;
-} else {
-  // Local development - start server with database sync
-  const newsletterScheduler = require('./src/services/newsletterScheduler');
+// if (process.env.VERCEL) {
+//   // Vercel serverless - just export the app
+//   module.exports = app;
+// } else {
+//   // Local development - start server with database sync
+//   const newsletterScheduler = require('./src/services/newsletterScheduler');
   
-  const startServer = async () => {
-    try {
-      // Test database connection
-      await sequelize.authenticate();
-      console.log('✅ Database connection established successfully.');
+//   const startServer = async () => {
+//     try {
+//       // Test database connection
+//       await sequelize.authenticate();
+//       console.log('✅ Database connection established successfully.');
 
-      // Sync models (without altering existing tables)
-      await sequelize.sync({ alter: false });
-      console.log('✅ Database models synchronized.');
+//       // Sync models (without altering existing tables)
+//       await sequelize.sync({ alter: false });
+//       console.log('✅ Database models synchronized.');
 
-      // Start newsletter scheduler
-      newsletterScheduler.start();
-      console.log('✅ Newsletter scheduler started.');
+//       // Start newsletter scheduler
+//       newsletterScheduler.start();
+//       console.log('✅ Newsletter scheduler started.');
 
-      // Start server
-      app.listen(PORT, () => {
-        console.log(`🚀 SmartBlog Node.js Backend running on port ${PORT}`);
-        console.log(`📍 API available at http://localhost:${PORT}/api`);
-      });
-    } catch (error) {
-      console.error('❌ Unable to start server:', error);
-      process.exit(1);
-    }
-  };
+//       // Start server
+//       app.listen(PORT, () => {
+//         console.log(`🚀 SmartBlog Node.js Backend running on port ${PORT}`);
+//         console.log(`📍 API available at http://localhost:${PORT}/api`);
+//       });
+//     } catch (error) {
+//       console.error('❌ Unable to start server:', error);
+//       process.exit(1);
+//     }
+//   };
 
-  startServer();
-}
+//   startServer();
+// }
 
 // Export for Vercel
 module.exports = app;
