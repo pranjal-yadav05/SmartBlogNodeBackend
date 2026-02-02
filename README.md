@@ -1,8 +1,7 @@
-# SmartBlog Node.js Backend
+<p align="center">
+  <img src="./repo_logo/repo_logo.png" alt="SmartBlogNodeBackend Logo" width="800" style="border-radius: 50px;"/>
+</p>
 
-AI-Powered Blog Application - Node.js Backend
-
-## Overview
 
 This is the Node.js/Express implementation of the SmartBlog backend, providing the same API as the Spring Boot version. It's designed to work with the same frontend and database without any changes.
 
