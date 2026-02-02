@@ -64,42 +64,32 @@ app.use('/', require('./src/routes/oauthRoutes'));
 // Error handling middleware
 app.use(errorHandler);
 
-// For Vercel serverless, we export the app
-// For local development, we start the server
-// if (process.env.VERCEL) {
-//   // Vercel serverless - just export the app
-//   module.exports = app;
-// } else {
-//   // Local development - start server with database sync
-//   const newsletterScheduler = require('./src/services/newsletterScheduler');
-  
-//   const startServer = async () => {
-//     try {
-//       // Test database connection
-//       await sequelize.authenticate();
-//       console.log('✅ Database connection established successfully.');
+if (!process.env.VERCEL) {
+  const newsletterScheduler = require('./src/services/newsletterScheduler');
 
-//       // Sync models (without altering existing tables)
-//       await sequelize.sync({ alter: false });
-//       console.log('✅ Database models synchronized.');
+  const startServer = async () => {
+    try {
+      await sequelize.authenticate();
+      console.log('✅ Database connection established successfully.');
 
-//       // Start newsletter scheduler
-//       newsletterScheduler.start();
-//       console.log('✅ Newsletter scheduler started.');
+      await sequelize.sync({ alter: true });
+      console.log('✅ Database models synchronized.');
 
-//       // Start server
-//       app.listen(PORT, () => {
-//         console.log(`🚀 SmartBlog Node.js Backend running on port ${PORT}`);
-//         console.log(`📍 API available at http://localhost:${PORT}/api`);
-//       });
-//     } catch (error) {
-//       console.error('❌ Unable to start server:', error);
-//       process.exit(1);
-//     }
-//   };
+      newsletterScheduler.start();
+      console.log('✅ Newsletter scheduler started.');
 
-//   startServer();
-// }
+      app.listen(PORT, () => {
+        console.log(`🚀 SmartBlog Node.js Backend running on port ${PORT}`);
+        console.log(`📍 API available at http://localhost:${PORT}/api`);
+      });
+    } catch (error) {
+      console.error('❌ Unable to start server:', error);
+      process.exit(1);
+    }
+  };
+
+  startServer();
+}
 
 // Export for Vercel
 module.exports = app;

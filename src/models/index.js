@@ -30,12 +30,20 @@ DraftPost.belongsTo(User, {
 
 // BlogPost has many Comments
 BlogPost.hasMany(Comment, { 
-  foreignKey: 'postId', 
+  foreignKey: {
+    name: 'postId',
+    field: 'post_id'
+  },
   as: 'comments',
-  onDelete: 'CASCADE'
+  onDelete: 'CASCADE',
+  hooks: true
 });
+
 Comment.belongsTo(BlogPost, { 
-  foreignKey: 'postId', 
+  foreignKey: {
+    name: 'postId',
+    field: 'post_id'
+  },
   as: 'post' 
 });
 

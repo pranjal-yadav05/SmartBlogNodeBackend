@@ -354,6 +354,9 @@ const blogPostController = {
       const { id } = req.params;
       const userEmail = req.user.email;
 
+      console.log(req.user)
+      
+
       const post = await BlogPost.findByPk(id, {
         include: [{
           model: User,
@@ -361,6 +364,7 @@ const blogPostController = {
           attributes: ['id', 'name', 'email', 'profileImage']
         }]
       });
+      console.log(post.author.email)
 
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
@@ -372,13 +376,18 @@ const blogPostController = {
 
       // Delete image from Cloudinary
       if (post.imageUrl) {
-        await cloudinaryService.deleteImage(post.imageUrl);
+         try {
+          await cloudinaryService.deleteImage(post.imageUrl);
+        } catch (err) {
+          console.error('Cloudinary error:', err);
+        }
       }
 
       await post.destroy();
 
       res.status(200).json('Post deleted successfully.');
     } catch (error) {
+      console.error('DELETE POST FAILED:', error);
       res.status(500).json({ message: error.message });
     }
   },
