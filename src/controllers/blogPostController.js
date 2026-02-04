@@ -197,8 +197,9 @@ const blogPostController = {
    */
   async createPost(req, res) {
     try {
-      const { title, content, category, authorEmail, published = 'true' } = req.body;
+      const { title, content, category, published = 'true' } = req.body;
 
+      const authorEmail = req.user.email;
       if (!title || !content || !authorEmail) {
         return res.status(400).json('Missing required fields');
       }

@@ -88,14 +88,14 @@ This is the Node.js/Express implementation of the SmartBlog backend, providing t
 | GET | `/category/:category` | No | Posts by category |
 | GET | `/categories/counts` | No | Category counts |
 | GET | `/user/:email/paginated` | No | User's posts |
-| POST | `/create` | No | Create post |
+| POST | `/create` | Yes | Create post |
 | PUT | `/:id` | Yes | Update post |
 | DELETE | `/:id` | Yes | Delete post |
 | POST | `/:id/view` | No | Increment views |
 | POST | `/:id/claps` | No | Increment claps |
 | GET | `/:id/comments` | No | Get comments |
 | POST | `/:id/comments` | Yes | Add comment |
-| POST | `/suggestions` | No | AI suggestions |
+| POST | `/suggestions` | Yes | AI suggestions |
 
 ### Drafts (`/api/posts/drafts`)
 
@@ -113,7 +113,6 @@ This is the Node.js/Express implementation of the SmartBlog backend, providing t
 |--------|----------|-------------|
 | POST | `/subscribe?email=` | Subscribe |
 | POST | `/unsubscribe?email=` | Unsubscribe |
-| POST | `/send-test-newsletter` | Send test |
 
 ### Contact (`/api`)
 

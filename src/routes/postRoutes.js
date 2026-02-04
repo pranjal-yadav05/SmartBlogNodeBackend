@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const blogPostController = require('../controllers/blogPostController');
-const { authenticate, optionalAuth } = require('../middleware/auth');
+const { authenticate} = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 // ========== Published Post Routes ==========
@@ -18,14 +18,10 @@ router.get('/:id', blogPostController.getPostById);
 router.post('/:id/view', blogPostController.incrementViews);
 router.post('/:id/claps', blogPostController.incrementClaps);
 
-// AI suggestions
-router.post('/suggestions', blogPostController.getAISuggestions);
-
-// Create post (public - author email in body)
-router.post('/create', upload.single('image'), blogPostController.createPost);
-
 // Protected routes
-router.put('/:id', authenticate, upload.single('imageFile'), blogPostController.updatePost);
+router.post('/create', authenticate, upload.single('image'), blogPostController.createPost);
+router.post('/suggestions', authenticate, blogPostController.getAISuggestions);
+router.put('/:id', upload.single('imageFile'), authenticate, blogPostController.updatePost);
 router.delete('/:id', authenticate, blogPostController.deletePost);
 
 // Comments
