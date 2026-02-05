@@ -35,20 +35,9 @@ app.use(express.json());
 // Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// // Session configuration (for OAuth)
-// app.use(session({
-//   secret: process.env.SESSION_SECRET || 'smartblog-secret',
-//   resave: false,
-//   saveUninitialized: false,
-//   cookie: {
-//     secure: process.env.NODE_ENV === 'production',
-//     maxAge: 24 * 60 * 60 * 1000 // 24 hours
-//   }
-// }));
 
 // Initialize Passport
 app.use(passport.initialize());
-// app.use(passport.session());
 
 // Health check endpoint
 app.get('/', (req, res) => {

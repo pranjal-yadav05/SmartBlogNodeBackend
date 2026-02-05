@@ -7,14 +7,14 @@ const oauthController = require('../controllers/oauthController');
 
 // Initiate Google OAuth
 router.get('/oauth2/authorization/google', 
-  passport.authenticate('google', { scope: ['email', 'profile'] })
+  passport.authenticate('google', { scope: ['email', 'profile'], session: false })
 );
 
 // Google OAuth callback
 router.get('/login/oauth2/code/google',
   passport.authenticate('google', { 
     failureRedirect: '/api/oauth2/failure',
-    session: true
+    session: false
   }),
   oauthController.oauthSuccess
 );
