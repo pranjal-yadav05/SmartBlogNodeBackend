@@ -15,6 +15,6 @@ router.get('/by-initial/:initial', userController.findByInitial);
 
 // Protected routes
 router.get('/profile', userController.getProfile);
-router.put('/profile', authenticate, upload.single('image'), userController.updateProfile);
+router.put('/profile', authenticate, upload.single('imageFile'), userController.updateProfile);
 
 module.exports = router;
