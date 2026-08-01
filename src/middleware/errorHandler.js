@@ -1,3 +1,5 @@
+const multer = require('multer');
+
 /**
  * Global error handling middleware
  * Matches Spring Boot's exception handling behavior
@@ -5,17 +7,26 @@
 const errorHandler = (err, req, res, next) => {
   console.error('Error:', err);
 
-  // Multer file size error
-  if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({ 
-      message: 'File size exceeds maximum limit of 10MB' 
+  // Any multer upload error (wrong field name, too many files, size limit, etc.)
+  if (err instanceof multer.MulterError) {
+    const messages = {
+      LIMIT_FILE_SIZE: 'File size exceeds maximum limit of 10MB',
+      LIMIT_UNEXPECTED_FILE: `Unexpected file field: "${err.field}"`,
+      LIMIT_FILE_COUNT: 'Too many files uploaded',
+      LIMIT_PART_COUNT: 'Too many parts in the form data',
+      LIMIT_FIELD_KEY: 'Field name too long',
+      LIMIT_FIELD_VALUE: 'Field value too long',
+      LIMIT_FIELD_COUNT: 'Too many fields'
+    };
+    return res.status(400).json({
+      message: messages[err.code] || 'File upload error'
     });
   }
 
-  // Multer file type error
+  // Multer file type error (from custom fileFilter)
   if (err.message === 'Only image files are allowed!') {
-    return res.status(400).json({ 
-      message: err.message 
+    return res.status(400).json({
+      message: err.message
     });
   }
 

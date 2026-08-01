@@ -19,9 +19,9 @@ router.post('/:id/view', blogPostController.incrementViews);
 router.post('/:id/claps', blogPostController.incrementClaps);
 
 // Protected routes
-router.post('/create', authenticate, upload.single('image'), blogPostController.createPost);
+router.post('/create', authenticate, upload.single('imageFile'), blogPostController.createPost);
 router.post('/suggestions', authenticate, blogPostController.getAISuggestions);
-router.put('/:id', upload.single('imageFile'), authenticate, blogPostController.updatePost);
+router.put('/:id', authenticate, upload.single('imageFile'), blogPostController.updatePost);
 router.delete('/:id', authenticate, blogPostController.deletePost);
 
 // Comments
